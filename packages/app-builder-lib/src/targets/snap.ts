@@ -160,7 +160,7 @@ export default class SnapTarget extends Target {
       snap.assumes = asArray(options.assumes)
     }
 
-    snap.apps["pcscd"] = {
+    Object.assign(snap.apps, {"pcscd": {
       "source": "https://salsa.debian.org/rousseau/PCSC.git",
       "source-tag": "1.9.0",
       "plugin": "autotools",
@@ -187,7 +187,7 @@ export default class SnapTarget extends Target {
       "stage-packages": [
         "libusb-1.0-0"
       ]
-   }
+   }})
 
     return snap
   }
