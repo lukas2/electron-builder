@@ -105,7 +105,7 @@ export default class SnapTarget extends Target {
       architectures: [toLinuxArchString(arch, "snap")],
       apps: {
         [snapName]: appDescriptor,
-        ["pcscd"]: {
+        "pcscd": {
             "source": "https://salsa.debian.org/rousseau/PCSC.git",
             "source-tag": "1.9.0",
             "plugin": "autotools",
