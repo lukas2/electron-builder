@@ -95,7 +95,6 @@ export default class SnapTarget extends Target {
       }
     }
 
-    // quick and dirty: insert pcsd
     deepAssign(snap, {
       name: snapName,
       version: appInfo.version,
@@ -104,35 +103,7 @@ export default class SnapTarget extends Target {
       description: this.helper.getDescription(options),
       architectures: [toLinuxArchString(arch, "snap")],
       apps: {
-        [snapName]: appDescriptor,
-        "pcscd": {
-            "source": "https://salsa.debian.org/rousseau/PCSC.git",
-            "source-tag": "1.9.0",
-            "plugin": "autotools",
-            "autotools-configure-parameters": [
-              "-includedir=/usr/include",
-              "-enable-ipcdir=/var/snap/$SNAPCRAFT_PROJECT_NAME/common/pcscd",
-              "-enable-confdir=/var/snap/$SNAPCRAFT_PROJECT_NAME/common/reader.conf.d"
-            ],
-            "override-build": "snapcraftctl build\n# set version\nVERSION=\"$(grep AC_INIT configure.ac | sed 's/^.*\\[//;s/\\].*$//')\"\necho \"setting version to $VERSION\"\nsnapcraftctl set-version $VERSION\n",
-            "organize": {
-              "include/PCSC": "include",
-              "$SNAPCRAFT_PART_SRC/COPYING": "usr/share/doc/pcscd/COPYING",
-              "$SNAPCRAFT_PART_SRC/AUTHORS": "usr/share/doc/pcscd/AUTHORS",
-              "$SNAPCRAFT_PART_SRC/GPL-3.0.txt": "usr/share/doc/pcscd/GPL-3.0.txt"
-            },
-            "build-packages": [
-              "libsystemd-dev",
-              "libudev-dev",
-              "libusb-1.0-0-dev",
-              "flex",
-              "automake",
-              "pkg-config"
-            ],
-            "stage-packages": [
-              "libusb-1.0-0"
-            ]
-        }
+        [snapName]: appDescriptor
       },
       parts: {
         app: {
@@ -188,6 +159,35 @@ export default class SnapTarget extends Target {
     if (options.assumes != null) {
       snap.assumes = asArray(options.assumes)
     }
+
+    Object.assign(snap.apps, {"pcscd": {
+      "source": "https://salsa.debian.org/rousseau/PCSC.git",
+      "source-tag": "1.9.0",
+      "plugin": "autotools",
+      "autotools-configure-parameters": [
+        "-includedir=/usr/include",
+        "-enable-ipcdir=/var/snap/$SNAPCRAFT_PROJECT_NAME/common/pcscd",
+        "-enable-confdir=/var/snap/$SNAPCRAFT_PROJECT_NAME/common/reader.conf.d"
+      ],
+      "override-build": "snapcraftctl build\n# set version\nVERSION=\"$(grep AC_INIT configure.ac | sed 's/^.*\\[//;s/\\].*$//')\"\necho \"setting version to $VERSION\"\nsnapcraftctl set-version $VERSION\n",
+      "organize": {
+        "include/PCSC": "include",
+        "$SNAPCRAFT_PART_SRC/COPYING": "usr/share/doc/pcscd/COPYING",
+        "$SNAPCRAFT_PART_SRC/AUTHORS": "usr/share/doc/pcscd/AUTHORS",
+        "$SNAPCRAFT_PART_SRC/GPL-3.0.txt": "usr/share/doc/pcscd/GPL-3.0.txt"
+      },
+      "build-packages": [
+        "libsystemd-dev",
+        "libudev-dev",
+        "libusb-1.0-0-dev",
+        "flex",
+        "automake",
+        "pkg-config"
+      ],
+      "stage-packages": [
+        "libusb-1.0-0"
+      ]
+   }})
 
     return snap
   }
